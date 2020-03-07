@@ -18,8 +18,8 @@ namespace DIYStreamDeck
 
         public string get_title() { return this.profile_title; }
         public void set_title(string input_title) { this.profile_title = input_title; }
-        
-        public void saveConfig()
+
+        public void saveActiveProfileConfig()
         {
             XmlTextWriter writer = new XmlTextWriter("activeProfile.xml", System.Text.Encoding.UTF8);
 
@@ -32,5 +32,6 @@ namespace DIYStreamDeck
             writer.Flush();
             writer.Close();
         }
+        
     }
 }

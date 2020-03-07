@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,22 +18,76 @@ namespace DIYStreamDeck
 {
     public partial class Form1 : Form
     {
-        // The GetForegroundWindow function returns a handle to the foreground window
-        // (the window  with which the user is currently working).
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
-        // The GetWindowThreadProcessId function retrieves the identifier of the thread
-        // that created the specified window and, optionally, the identifier of the
-        // process that created the window.
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern Int32 GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+        static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
+
 
         private Dictionary<string, string> configLocations = new Dictionary<string, string>();
         private profile profile;
         private XmlTextReader reader = null;
         globalKeyboardHook gkh = new globalKeyboardHook();
-        static int spotify;
+        //static int spotify;   
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            //spotify = getPid("spotify");
+
+            string activeProfile = System.IO.Directory.GetCurrentDirectory() + "/activeProfile.xml";
+            string startupPath = System.IO.Directory.GetCurrentDirectory() + "/Profiles";
+
+            if (!Directory.Exists(startupPath)){
+                DirectoryInfo di = Directory.CreateDirectory(startupPath);
+            }
+
+            if (!File.Exists(activeProfile)){
+                createNewConfig();
+            }
+            loadConfig(activeProfile);
+
+            string[] filePaths = Directory.GetFiles(startupPath, "*.xml");
+
+            foreach (String file in filePaths){
+                String[] aux = file.Split('\\');
+                String key = aux[aux.Length - 1].Split('.')[0];
+                String value = file;
+
+                configLocations.Add(key, value);
+                selectProfile.Items.Add(key);
+            }
+
+            //Set up que keys
+            gkh.HookedKeys.Add(Keys.F13);
+            gkh.HookedKeys.Add(Keys.F14);
+            gkh.HookedKeys.Add(Keys.F15);
+            gkh.HookedKeys.Add(Keys.F16);
+            gkh.KeyDown += new KeyEventHandler(gkh_KeyDown);
+            gkh.KeyUp += new KeyEventHandler(gkh_KeyUp);
+        }
+
+        public static void PressKey(Keys key, bool up)
+        {
+            const int KEYEVENTF_EXTENDEDKEY = 0x1;
+            const int KEYEVENTF_KEYUP = 0x2;
+            if (up)
+            {
+                keybd_event((byte)key, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, (UIntPtr)0);
+            }
+            else
+            {
+                keybd_event((byte)key, 0x45, KEYEVENTF_EXTENDEDKEY, (UIntPtr)0);
+            }
+        }
 
         // Returns the name of the process owning the foreground window.
         private static string GetForegroundProcessName()
@@ -70,49 +125,6 @@ namespace DIYStreamDeck
             return 0;
         }
 
-        public Form1()
-        {
-            InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            spotify = getPid("spotify");
-
-            string activeProfile = System.IO.Directory.GetCurrentDirectory() + "/activeProfile.xml";
-            string startupPath = System.IO.Directory.GetCurrentDirectory() + "/Profiles";
-
-            if (!Directory.Exists(startupPath)){
-                DirectoryInfo di = Directory.CreateDirectory(startupPath);
-            }
-
-            if (File.Exists(activeProfile)){
-                loadConfig(activeProfile);
-            }
-            else{
-                createNewConfig();
-            }
-
-            string[] filePaths = Directory.GetFiles(startupPath, "*.xml");
-
-            foreach (String file in filePaths){
-                String[] aux = file.Split('\\');
-                String key = aux[aux.Length - 1].Split('.')[0];
-                String value = file;
-
-                configLocations.Add(key, value);
-                selectProfile.Items.Add(key);
-            }
-
-            //Set up que keys
-            gkh.HookedKeys.Add(Keys.F13);
-            gkh.HookedKeys.Add(Keys.F14);
-            gkh.HookedKeys.Add(Keys.F15);
-            gkh.HookedKeys.Add(Keys.F16);
-            gkh.KeyDown += new KeyEventHandler(gkh_KeyDown);
-            gkh.KeyUp += new KeyEventHandler(gkh_KeyUp);
-        }
-
         void gkh_KeyUp(object sender, KeyEventArgs e)
         {
             e.Handled = true;
@@ -121,30 +133,87 @@ namespace DIYStreamDeck
         void gkh_KeyDown(object sender, KeyEventArgs e)
         {
             string buttonPressed = e.KeyCode.ToString();
+
+            ArrayList data;
+
             switch (buttonPressed)
             {
-                case "F13":
-                    Boolean newAudioState = AudioManager.GetMasterVolumeMute() ? false : true;
-                    AudioManager.SetMasterVolumeMute(newAudioState);
+                case "F13": //Button1
+                    data = profile.getButtonData("Button1");
+
+                    switch (data[0])
+                    {
+                        case "Program":
+                            Process.Start(data[1].ToString());
+                            break;
+                        case "Sound":
+                            if (data[1].Equals("MuteAll"))
+                            {
+                                AudioManager.ToggleMasterVolumeMute();
+                            }
+                            else
+                            {
+                                //AudioManager.SetApplicationVolume(2, 50); para a janela em focus
+                            }
+                            break;
+                        default:
+                            PressKey(Keys.F13, false);
+                            PressKey(Keys.F13, true);
+                            break;
+                    }
                     break;
-                case "F14":
-                    AudioManager.SetApplicationVolume(spotify, 50);
+                case "F14": //Button2
+                    data = profile.getButtonData("Button2");
+
+                    switch (data[0])
+                    {
+                        case "Program":
+                            Process.Start(data[1].ToString());
+                            break;
+                        case "Sound":
+                            if (data[1].Equals("MuteAll"))
+                            {
+                                AudioManager.ToggleMasterVolumeMute();
+                            }
+                            else
+                            {
+                                //AudioManager.SetApplicationVolume(2, 50); para a janela em focus
+                            }
+                            break;
+                        default:
+                            PressKey(Keys.F14, false);
+                            PressKey(Keys.F14, true);
+                            break;
+                    }
                     break;
-                case "F15":
-                    Console.WriteLine("F15");
+                case "F15": //Button3
+                    data = profile.getButtonData("Button3");
+
+                    switch (data[0])
+                    {
+                        case "Program":
+                            Process.Start(data[1].ToString());
+                            break;
+                        case "Sound":
+                            if (data[1].Equals("MuteAll"))
+                            {
+                                AudioManager.ToggleMasterVolumeMute();
+                            }
+                            else
+                            {
+                                //AudioManager.SetApplicationVolume(2, 50); para a janela em focus
+                            }
+                            break;
+                        default:
+                            PressKey(Keys.F15, false);
+                            PressKey(Keys.F15, true);
+                            break;
+                    }
                     break;
                 default:
                     break;
             }
             e.Handled = true;
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string selectedEmployee = (string)selectProfile.SelectedItem;
-            profile = new profile(selectedEmployee);
-
-            profile.saveActiveProfileConfig();
         }
 
         private void loadConfig(string activeProfileFilePath)
@@ -155,13 +224,26 @@ namespace DIYStreamDeck
                 reader = new XmlTextReader(activeProfileFilePath);
                 XmlDocument xml = new XmlDocument();
                 xml.Load(activeProfileFilePath);
-                string id = xml.SelectSingleNode("profile/title").InnerText;
+                string id = xml.SelectSingleNode("Profile/Title").InnerText;
                 selectProfile.SelectedText = id;
 
+                string selectedProfileTitle = (string)selectProfile.SelectedItem;
+                profile = new profile(selectedProfileTitle);
 
-                //f14.Image = new Bitmap(@"C:\Users\TMind\source\repos\DIYStreamDeck\DIYStreamDeck\bin\Debug\s.jpg");
-                //f14.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
-                //button1.Location = new System.Drawing.Point(13, 100);
+                for (int i = 1; i <= 9; i++)
+                {
+                    ArrayList SubData = new ArrayList();
+
+                    string bottomKey = "Button" + i;
+                    string getXMLType = xml.SelectSingleNode("Profile/" + bottomKey + "/Type").InnerText;
+                    string getXMLProgram = xml.SelectSingleNode("Profile/" + bottomKey + "/Program").InnerText;
+
+                    SubData.Add(getXMLType);
+                    SubData.Add(getXMLProgram);
+
+                    profile.setButtonData(bottomKey, SubData);
+                }
+
 
             }
             finally
@@ -175,15 +257,41 @@ namespace DIYStreamDeck
         {
             XmlTextWriter writer = new XmlTextWriter("activeProfile.xml", System.Text.Encoding.UTF8);
 
-            writer.WriteStartDocument(true);
+            writer.WriteStartDocument();
+            writer.WriteWhitespace("\n  ");
+            writer.WriteStartElement("Profile");//START PARENT
+            writer.Indentation = 4;
+            writer.IndentChar = Convert.ToChar(" ");
             writer.Formatting = Formatting.Indented;
-            writer.Indentation = 2;
-            writer.WriteStartElement("profile");
-            writer.WriteElementString("title", "");
-            writer.WriteEndElement();
+
+            writer.WriteElementString("Title", "");
+
+            for (int i = 1; i <= 9; i++)
+            {
+                string tagName = "Button" + i;
+                writer.WriteStartElement(tagName);// START CHILD 
+                writer.WriteElementString("Type", "Default");
+                //writer.WriteElementString("Image", "");
+                writer.WriteElementString("Program", "");
+                writer.WriteEndElement();//END CHILD
+            }
+
+            writer.WriteEndElement();//END PARENT
+            writer.WriteEndDocument();
+
             writer.Flush();
             writer.Close();
         }
+
+        //Form elements events
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedProfileTitle = (string)selectProfile.SelectedItem;
+
+            profile.set_title(selectedProfileTitle);
+
+            profile.saveActiveProfileConfig();
+        } 
 
         private void newConfig_Click(object sender, EventArgs e)
         {

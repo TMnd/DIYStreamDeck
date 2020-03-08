@@ -27,12 +27,11 @@ namespace DIYStreamDeck
         [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
         static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
-
         private Dictionary<string, string> configLocations = new Dictionary<string, string>();
-        private profile profile;
+        profile profile;
         private XmlTextReader reader = null;
         globalKeyboardHook gkh = new globalKeyboardHook();
-        //static int spotify;   
+        int program;
 
         public Form1()
         {
@@ -41,8 +40,6 @@ namespace DIYStreamDeck
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //spotify = getPid("spotify");
-
             string activeProfile = System.IO.Directory.GetCurrentDirectory() + "/activeProfile.xml";
             string startupPath = System.IO.Directory.GetCurrentDirectory() + "/Profiles";
 
@@ -64,6 +61,11 @@ namespace DIYStreamDeck
 
                 configLocations.Add(key, value);
                 selectProfile.Items.Add(key);
+            }
+
+            for(int i = 1; i <= 9; i++)
+            {
+                refreshButtonData("Button" + i);
             }
 
             //Set up que keys
@@ -146,14 +148,19 @@ namespace DIYStreamDeck
                         case "Program":
                             Process.Start(data[1].ToString());
                             break;
-                        case "Sound":
-                            if (data[1].Equals("MuteAll"))
-                            {
+                        case "Windows":
+                            if (data[1].Equals(""))
                                 AudioManager.ToggleMasterVolumeMute();
-                            }
                             else
                             {
-                                //AudioManager.SetApplicationVolume(2, 50); para a janela em focus
+                                //Drop a error when is used sometimes in a row.
+                                program = getPid(data[1].ToString().Split('\\')[1]);
+                                string status = AudioManager.GetApplicationMute(program).ToString();
+                                Console.WriteLine(status);
+                                if (status.Equals("False"))
+                                    AudioManager.SetApplicationMute(program, true);
+                                else
+                                    AudioManager.SetApplicationMute(program, false);
                             }
                             break;
                         default:
@@ -170,14 +177,19 @@ namespace DIYStreamDeck
                         case "Program":
                             Process.Start(data[1].ToString());
                             break;
-                        case "Sound":
-                            if (data[1].Equals("MuteAll"))
-                            {
+                        case "Windows":
+                            if (data[1].Equals(""))
                                 AudioManager.ToggleMasterVolumeMute();
-                            }
                             else
                             {
-                                //AudioManager.SetApplicationVolume(2, 50); para a janela em focus
+                                //Drop a error when is used sometimes in a row.
+                                program = getPid(data[1].ToString().Split('\\')[1]);
+                                string status = AudioManager.GetApplicationMute(program).ToString();
+                                Console.WriteLine(status);
+                                if (status.Equals("False"))
+                                    AudioManager.SetApplicationMute(program, true);
+                                else
+                                    AudioManager.SetApplicationMute(program, false);
                             }
                             break;
                         default:
@@ -194,14 +206,19 @@ namespace DIYStreamDeck
                         case "Program":
                             Process.Start(data[1].ToString());
                             break;
-                        case "Sound":
-                            if (data[1].Equals("MuteAll"))
-                            {
+                        case "Windows":
+                            if (data[1].Equals(""))
                                 AudioManager.ToggleMasterVolumeMute();
-                            }
                             else
                             {
-                                //AudioManager.SetApplicationVolume(2, 50); para a janela em focus
+                                //Drop a error when is used sometimes in a row.
+                                program = getPid(data[1].ToString().Split('\\')[1]);
+                                string status = AudioManager.GetApplicationMute(program).ToString();
+                                Console.WriteLine(status);
+                                if (status.Equals("False"))
+                                    AudioManager.SetApplicationMute(program, true);
+                                else
+                                    AudioManager.SetApplicationMute(program, false);
                             }
                             break;
                         default:
@@ -224,11 +241,9 @@ namespace DIYStreamDeck
                 reader = new XmlTextReader(activeProfileFilePath);
                 XmlDocument xml = new XmlDocument();
                 xml.Load(activeProfileFilePath);
-                string id = xml.SelectSingleNode("Profile/Title").InnerText;
-                selectProfile.SelectedText = id;
-
-                string selectedProfileTitle = (string)selectProfile.SelectedItem;
-                profile = new profile(selectedProfileTitle);
+                string title_name = xml.SelectSingleNode("Profile/Title").InnerText;
+                selectProfile.SelectedText = title_name; 
+                profile = new profile(title_name);
 
                 for (int i = 1; i <= 9; i++)
                 {
@@ -243,8 +258,7 @@ namespace DIYStreamDeck
 
                     profile.setButtonData(bottomKey, SubData);
                 }
-
-
+                
             }
             finally
             {
@@ -283,6 +297,58 @@ namespace DIYStreamDeck
             writer.Close();
         }
 
+        public void refreshButtonData(string buttonid)
+        {
+            ArrayList a = profile.getButtonData(buttonid);
+            string programName="";
+
+            if (!a[1].Equals(""))
+            {
+                string[] aux = a[1].ToString().Split('\\');
+                programName = aux[aux.Length - 1].Split('.')[0];
+                Console.WriteLine(programName);
+            }
+
+            switch (buttonid)
+            {
+                case "Button1":
+                    if (a[0].Equals("Program"))
+                        f13.Text = programName;
+                    else if (a[0].Equals("Default"))
+                        f13.Text = "F13";
+                    else if (a[0].Equals("Windows"))
+                        if (programName.Equals(""))
+                            f13.Text = "Mute All";
+                        else
+                            f13.Text = "Mute " + programName;
+                    break;
+                case "Button2":
+                    if (a[0].Equals("Program"))
+                        f14.Text = programName;
+                    else if (a[0].Equals("Default"))
+                        f14.Text = "F14";
+                    else if (a[0].Equals("Windows"))
+                        if (programName.Equals(""))
+                            f14.Text = "Mute All";
+                        else
+                            f14.Text = "Mute " + programName;
+                    break;
+                case "Button3":
+                    if (a[0].Equals("Program"))
+                        f15.Text = programName;
+                    else if (a[0].Equals("Default"))
+                        f15.Text = "F15";
+                    else if (a[0].Equals("Windows"))
+                        if (programName.Equals(""))
+                            f15.Text = "Mute All";
+                        else
+                            f15.Text = "Mute " + programName;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         //Form elements events
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -295,33 +361,38 @@ namespace DIYStreamDeck
 
         private void newConfig_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("New");
+            profile.set_title(selectProfile.Text);
+            profile.saveActiveProfileConfig();
         }
 
         private void f13_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("F13 - option");
-            if (AudioManager.GetMasterVolumeMute())
-            {
-                AudioManager.SetMasterVolumeMute(false);
-            }
-            else
-            {
-                AudioManager.SetMasterVolumeMute(true);
-            }
-                
-                
+            string button = "Button1";
+            Form2 f2 = new Form2(profile, button); //this is the change, code for redirect  
+            f2.ShowDialog();
 
+            //When the form2 closes
+            refreshButtonData(button);
         }
 
         private void f14_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("F14 - option");
+            string button = "Button2";
+            Form2 f2 = new Form2(profile, button); //this is the change, code for redirect  
+            f2.ShowDialog();
+
+            //When the form2 closes
+            refreshButtonData(button);
         }
 
         private void f15_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("F15 - option");
+            string button = "Button3";
+            Form2 f2 = new Form2(profile, button); //this is the change, code for redirect  
+            f2.ShowDialog();
+
+            //When the form2 closes
+            refreshButtonData(button);
         }
     }
 }

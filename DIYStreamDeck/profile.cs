@@ -8,9 +8,10 @@ using System.Xml;
 
 namespace DIYStreamDeck
 {
-    class profile
+    public class profile
     {
         private string profile_title;
+
         ArrayList SubData = new ArrayList();
         private Dictionary<string, ArrayList> ButtonData = new Dictionary<string, ArrayList>();
         
@@ -20,7 +21,7 @@ namespace DIYStreamDeck
             this.profile_title = profile_title;
         }
 
-        public string get_title() { return this.profile_title; }
+        public string get_title() { return profile_title;  }
         public void set_title(string input_title) { this.profile_title = input_title; }
 
         public void saveActiveProfileConfig()
@@ -39,9 +40,11 @@ namespace DIYStreamDeck
             for (int i = 1; i <= 9; i++)
             {
                 string tagName = "Button" + i;
+                ArrayList a = new ArrayList();
+                a = getButtonData(tagName);
                 writer.WriteStartElement(tagName);// START CHILD 
-                writer.WriteElementString("Type", "Default");
-                writer.WriteElementString("Program", "");
+                writer.WriteElementString("Type", a[0].ToString());
+                writer.WriteElementString("Program", a[1].ToString());
                 writer.WriteEndElement();//END CHILD
             }
 
@@ -54,12 +57,21 @@ namespace DIYStreamDeck
         
         public void setButtonData(string key, ArrayList subData)
         {
-            this.ButtonData.Add(key, subData);
+            if(ButtonData.ContainsKey(key))
+                ButtonData[key] = subData;
+            else
+                ButtonData.Add(key, subData);
         }
 
         public ArrayList getButtonData(string key)
         {
-            return this.ButtonData[key];
+            return ButtonData[key];
         }
+
+        public Dictionary<string, ArrayList> getAllButtonData()
+        {
+            return ButtonData;
+        }
+
     }
 }

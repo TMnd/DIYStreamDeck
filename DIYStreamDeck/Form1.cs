@@ -27,6 +27,9 @@ namespace DIYStreamDeck
         [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
         static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
+        [System.Runtime.InteropServices.DllImport("nircmd.dll")]
+        public static extern bool DoNirCmd(string NirCmdStr);
+
         private Dictionary<string, string> configLocations = new Dictionary<string, string>();
         profile profile;
         private XmlTextReader reader = null;
@@ -75,6 +78,11 @@ namespace DIYStreamDeck
             gkh.HookedKeys.Add(Keys.F16);
             gkh.KeyDown += new KeyEventHandler(gkh_KeyDown);
             gkh.KeyUp += new KeyEventHandler(gkh_KeyUp);
+        }
+
+        public static void RunCmd(string command)
+        {
+            DoNirCmd(command);
         }
 
         public static void PressKey(Keys key, bool up)

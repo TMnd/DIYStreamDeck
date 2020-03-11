@@ -27,9 +27,6 @@ namespace DIYStreamDeck
         [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
         static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
-        [System.Runtime.InteropServices.DllImport("nircmd.dll")]
-        public static extern bool DoNirCmd(string NirCmdStr);
-
         private Dictionary<string, string> configLocations = new Dictionary<string, string>();
         profile profile;
         private XmlTextReader reader = null;
@@ -43,6 +40,11 @@ namespace DIYStreamDeck
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            /*string startupPatha = ;
+            string projectDirectory = ;
+
+            Console.WriteLine(projectDirectory);*/
+
             string activeProfile = System.IO.Directory.GetCurrentDirectory() + "/activeProfile.xml";
             string startupPath = System.IO.Directory.GetCurrentDirectory() + "/Profiles";
 
@@ -78,11 +80,6 @@ namespace DIYStreamDeck
             gkh.HookedKeys.Add(Keys.F16);
             gkh.KeyDown += new KeyEventHandler(gkh_KeyDown);
             gkh.KeyUp += new KeyEventHandler(gkh_KeyUp);
-        }
-
-        public static void RunCmd(string command)
-        {
-            DoNirCmd(command);
         }
 
         public static void PressKey(Keys key, bool up)
@@ -154,7 +151,8 @@ namespace DIYStreamDeck
                     switch (data[0])
                     {
                         case "Program":
-                            Process.Start(data[1].ToString());
+                            //Process.Start(data[1].ToString());
+                            NirCmdCall.DoNirCmd("setdefaultsounddevice \"Headset\"");
                             break;
                         case "Windows":
                             if (data[1].Equals(""))
@@ -183,7 +181,8 @@ namespace DIYStreamDeck
                     switch (data[0])
                     {
                         case "Program":
-                            Process.Start(data[1].ToString());
+                            //Process.Start(data[1].ToString());
+                            NirCmdCall.DoNirCmd("setdefaultsounddevice \"Altifalantes\"");
                             break;
                         case "Windows":
                             if (data[1].Equals(""))
@@ -402,5 +401,11 @@ namespace DIYStreamDeck
             //When the form2 closes
             refreshButtonData(button);
         }
+    }
+
+    public class NirCmdCall
+    {
+        [System.Runtime.InteropServices.DllImport("nircmd.dll")]
+        public static extern bool DoNirCmd(String NirCmdStr);
     }
 }

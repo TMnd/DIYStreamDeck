@@ -39,6 +39,8 @@
             this.radioWindowsMute = new System.Windows.Forms.RadioButton();
             this.radioProgramMute = new System.Windows.Forms.RadioButton();
             this.inputProgram = new System.Windows.Forms.TextBox();
+            this.defaultAudioDevice = new System.Windows.Forms.RadioButton();
+            this.deviceName = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // saveButton
@@ -152,11 +154,34 @@
             this.inputProgram.TabIndex = 14;
             this.inputProgram.TextChanged += new System.EventHandler(this.inputProgram_TextChanged);
             // 
+            // defaultAudioDevice
+            // 
+            this.defaultAudioDevice.AutoSize = true;
+            this.defaultAudioDevice.Location = new System.Drawing.Point(96, 223);
+            this.defaultAudioDevice.Name = "defaultAudioDevice";
+            this.defaultAudioDevice.Size = new System.Drawing.Size(89, 17);
+            this.defaultAudioDevice.TabIndex = 15;
+            this.defaultAudioDevice.TabStop = true;
+            this.defaultAudioDevice.Text = "Audio Device";
+            this.defaultAudioDevice.UseVisualStyleBackColor = true;
+            this.defaultAudioDevice.CheckedChanged += new System.EventHandler(this.defaultAudioDevice_CheckedChanged);
+            // 
+            // deviceName
+            // 
+            this.deviceName.Enabled = false;
+            this.deviceName.Location = new System.Drawing.Point(188, 222);
+            this.deviceName.Name = "deviceName";
+            this.deviceName.Size = new System.Drawing.Size(115, 20);
+            this.deviceName.TabIndex = 16;
+            this.deviceName.TextChanged += new System.EventHandler(this.deviceName_TextChanged);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(389, 245);
+            this.ClientSize = new System.Drawing.Size(389, 294);
+            this.Controls.Add(this.deviceName);
+            this.Controls.Add(this.defaultAudioDevice);
             this.Controls.Add(this.inputProgram);
             this.Controls.Add(this.radioProgramMute);
             this.Controls.Add(this.radioWindowsMute);
@@ -188,5 +213,7 @@
         private System.Windows.Forms.RadioButton radioWindowsMute;
         private System.Windows.Forms.RadioButton radioProgramMute;
         private System.Windows.Forms.TextBox inputProgram;
+        private System.Windows.Forms.RadioButton defaultAudioDevice;
+        private System.Windows.Forms.TextBox deviceName;
     }
 }

@@ -109,6 +109,7 @@ namespace DIYStreamDeck
             }
             else
             {
+                inputProgram.Text = "";
                 inputProgram.Enabled = false;
             }   
         }
@@ -116,6 +117,26 @@ namespace DIYStreamDeck
         private void inputProgram_TextChanged(object sender, EventArgs e)
         {
             program = ".\\"+inputProgram.Text;
+        }
+
+        private void defaultAudioDevice_CheckedChanged(object sender, EventArgs e)
+        {
+            type = "Windows";
+            if (defaultAudioDevice.Checked == true)
+            {
+                programPath.Text = "";
+                deviceName.Enabled = true;
+            }
+            else
+            {
+                deviceName.Text = "";
+                deviceName.Enabled = false;
+            }
+        }
+
+        private void deviceName_TextChanged(object sender, EventArgs e)
+        {
+            program = ".\\"+ deviceName.Text;
         }
 
         private void saveButton_Click(object sender, EventArgs e)

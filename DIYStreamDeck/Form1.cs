@@ -138,112 +138,73 @@ namespace DIYStreamDeck
         {
             string buttonPressed = e.KeyCode.ToString();
 
-            ArrayList data;
-
             switch (buttonPressed)
             {
                 case "F13": //Button1
-                    data = profile.getButtonData("Button1");
-
-                    switch (data[0])
-                    {
-                        case "Program":
-                            Process.Start(data[1].ToString());
-                            break;
-                        case "Windows":
-                            if (data[1].Equals(""))
-                                AudioManager.ToggleMasterVolumeMute();
-                            else
-                            {
-                                //Drop a error when is used sometimes in a row.
-                                program = getPid(data[1].ToString().Split('\\')[1]);
-                                string status = AudioManager.GetApplicationMute(program).ToString();
-                                //Console.WriteLine(status);
-                                if (status.Equals("False"))
-                                    AudioManager.SetApplicationMute(program, true);
-                                else
-                                    AudioManager.SetApplicationMute(program, false);
-                            }
-                            break;
-                        case "nircmd":
-                            NirCmdCall.DoNirCmd("setdefaultsounddevice \"Headset\"");
-                            break;
-                        default:
-                            PressKey(Keys.F13, false);
-                            PressKey(Keys.F13, true);
-                            break;
-                    }
+                    buttonCommands("Button1");
                     break;
                 case "F14": //Button2
-                    data = profile.getButtonData("Button2");
-
-                    switch (data[0])
-                    {
-                        case "Program":
-                            //Process.Start(data[1].ToString());
-                            NirCmdCall.DoNirCmd("setdefaultsounddevice \"Altifalantes\"");
-                            break;
-                        case "Windows":
-                            if (data[1].Equals(""))
-                                AudioManager.ToggleMasterVolumeMute();
-                            else
-                            {
-                                //Drop a error when is used sometimes in a row.
-                                program = getPid(data[1].ToString().Split('\\')[1]);
-                                string status = AudioManager.GetApplicationMute(program).ToString();
-                                //Console.WriteLine(status);
-                                if (status.Equals("False"))
-                                    AudioManager.SetApplicationMute(program, true);
-                                else
-                                    AudioManager.SetApplicationMute(program, false);
-                            }
-                            break;
-                        case "nircmd":
-                            NirCmdCall.DoNirCmd("setdefaultsounddevice \"Headset\"");
-                            break;
-                        default:
-                            PressKey(Keys.F14, false);
-                            PressKey(Keys.F14, true);
-                            break;
-                    }
+                    buttonCommands("Button2");
                     break;
                 case "F15": //Button3
-                    data = profile.getButtonData("Button3");
-
-                    switch (data[0])
-                    {
-                        case "Program":
-                            Process.Start(data[1].ToString());
-                            break;
-                        case "Windows":
-                            if (data[1].Equals(""))
-                                AudioManager.ToggleMasterVolumeMute();
-                            else
-                            {
-                                //Drop a error when is used sometimes in a row.
-                                //program = getPid(data[1].ToString().Split('\\')[1]);
-                                program = getPid("current");
-                                string status = AudioManager.GetApplicationMute(program).ToString();
-                                //Console.WriteLine(status);
-                                if (status.Equals("False"))
-                                    AudioManager.SetApplicationMute(program, true);
-                                else
-                                    AudioManager.SetApplicationMute(program, false);
-                            }
-                            break;
-                        case "nircmd":
-                            NirCmdCall.DoNirCmd("setdefaultsounddevice \"Headset\"");
-                            break;
-                        default:
-                            PressKey(Keys.F15, false);
-                            PressKey(Keys.F15, true);
-                            break;
-                    }
+                    buttonCommands("Button3");
+                    break;
+                case "F16": //Button3
+                    buttonCommands("Button4");
+                    break;
+                case "F17": //Button3
+                    buttonCommands("Button5");
+                    break;
+                case "F18": //Button3
+                    buttonCommands("Button6");
+                    break;
+                case "F19": //Button3
+                    buttonCommands("Button7");
+                    break;
+                case "F20": //Button3
+                    buttonCommands("Button8");
+                    break;
+                case "F21": //Button3
+                    buttonCommands("Button9");
                     break;
                 default:
                     break;
             }
             e.Handled = true;
+        }
+
+        private void buttonCommands(string buttonId)
+        {
+            ArrayList data = profile.getButtonData(buttonId);
+
+            switch (data[0])
+            {
+                case "Program":
+                    Process.Start(data[1].ToString());
+                    break;
+                case "Windows":
+                    if (data[1].Equals(""))
+                        AudioManager.ToggleMasterVolumeMute();
+                    else
+                    {
+                        //Drop a error when is used sometimes in a row.
+                        program = getPid(data[1].ToString().Split('\\')[1]);
+                        string status = AudioManager.GetApplicationMute(program).ToString();
+                        //Console.WriteLine(status);
+                        if (status.Equals("False"))
+                            AudioManager.SetApplicationMute(program, true);
+                        else
+                            AudioManager.SetApplicationMute(program, false);
+                    }
+                    break;
+                case "nircmd":
+                    NirCmdCall.DoNirCmd("setdefaultsounddevice \"Headset\"");
+                    break;
+                default:
+                    PressKey(Keys.F13, false);
+                    PressKey(Keys.F13, true);
+                    break;
+            }
         }
 
         private void loadConfig(string activeProfileFilePath)
@@ -357,6 +318,72 @@ namespace DIYStreamDeck
                         else
                             f15.Text = "Mute " + programName;
                     break;
+                case "Button4":
+                    if (a[0].Equals("Program"))
+                        f16.Text = programName;
+                    else if (a[0].Equals("Default"))
+                        f16.Text = "F16";
+                    else if (a[0].Equals("Windows"))
+                        if (programName.Equals(""))
+                            f16.Text = "Mute All";
+                        else
+                            f16.Text = "Mute " + programName;
+                    break;
+                case "Button5":
+                    if (a[0].Equals("Program"))
+                        f17.Text = programName;
+                    else if (a[0].Equals("Default"))
+                        f17.Text = "F17";
+                    else if (a[0].Equals("Windows"))
+                        if (programName.Equals(""))
+                            f17.Text = "Mute All";
+                        else
+                            f17.Text = "Mute " + programName;
+                    break;
+                case "Button6":
+                    if (a[0].Equals("Program"))
+                        f18.Text = programName;
+                    else if (a[0].Equals("Default"))
+                        f18.Text = "F18";
+                    else if (a[0].Equals("Windows"))
+                        if (programName.Equals(""))
+                            f18.Text = "Mute All";
+                        else
+                            f18.Text = "Mute " + programName;
+                    break;
+                case "Button7":
+                    if (a[0].Equals("Program"))
+                        f19.Text = programName;
+                    else if (a[0].Equals("Default"))
+                        f19.Text = "F19";
+                    else if (a[0].Equals("Windows"))
+                        if (programName.Equals(""))
+                            f19.Text = "Mute All";
+                        else
+                            f19.Text = "Mute " + programName;
+                    break;
+                case "Button8":
+                    if (a[0].Equals("Program"))
+                        f20.Text = programName;
+                    else if (a[0].Equals("Default"))
+                        f20.Text = "F20";
+                    else if (a[0].Equals("Windows"))
+                        if (programName.Equals(""))
+                            f20.Text = "Mute All";
+                        else
+                            f20.Text = "Mute " + programName;
+                    break;
+                case "Button9":
+                    if (a[0].Equals("Program"))
+                        f21.Text = programName;
+                    else if (a[0].Equals("Default"))
+                        f21.Text = "F21";
+                    else if (a[0].Equals("Windows"))
+                        if (programName.Equals(""))
+                            f21.Text = "Mute All";
+                        else
+                            f21.Text = "Mute " + programName;
+                    break;
                 default:
                     break;
             }
@@ -380,34 +407,59 @@ namespace DIYStreamDeck
 
         private void f13_Click(object sender, EventArgs e)
         {
-            string button = "Button1";
-            Form2 f2 = new Form2(profile, button); //this is the change, code for redirect  
-            f2.ShowDialog();
-
-            //When the form2 closes
-            refreshButtonData(button);
+            setButtonsClick("Button1");
         }
 
         private void f14_Click(object sender, EventArgs e)
         {
-            string button = "Button2";
-            Form2 f2 = new Form2(profile, button); //this is the change, code for redirect  
-            f2.ShowDialog();
-
-            //When the form2 closes
-            refreshButtonData(button);
+            setButtonsClick("Button2");
         }
 
         private void f15_Click(object sender, EventArgs e)
         {
-            string button = "Button3";
-            Form2 f2 = new Form2(profile, button); //this is the change, code for redirect  
+            setButtonsClick("Button3");
+        }
+
+        private void f16_Click(object sender, EventArgs e)
+        {
+            setButtonsClick("Button4");
+        }
+
+        private void f17_Click(object sender, EventArgs e)
+        {
+            setButtonsClick("Button5");
+        }
+
+        private void f18_Click(object sender, EventArgs e)
+        {
+            setButtonsClick("Button6");
+        }
+
+        private void f19_Click(object sender, EventArgs e)
+        {
+            setButtonsClick("Button7");
+        }
+
+        private void f20_Click(object sender, EventArgs e)
+        {
+            setButtonsClick("Button8");
+        }
+
+        private void f21_Click(object sender, EventArgs e)
+        {
+            setButtonsClick("Button9");
+        }
+
+        private void setButtonsClick(string buttonId)
+        {
+            Form2 f2 = new Form2(profile, buttonId); //this is the change, code for redirect  
             f2.ShowDialog();
 
             //When the form2 closes
-            refreshButtonData(button);
+            refreshButtonData(buttonId);
         }
     }
+
 
     public class NirCmdCall
     {

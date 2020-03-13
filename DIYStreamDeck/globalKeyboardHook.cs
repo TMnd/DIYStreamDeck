@@ -76,12 +76,6 @@ namespace Utilities {
         /// <summary>
         /// Installs the global hook
         /// </summary>
-        /*public void hook() {
-            Console.WriteLine("0 ----");
-            IntPtr hInstance = LoadLibrary("User32");
-            Console.WriteLine("1 ----");
-            hhook = SetWindowsHookEx(WH_KEYBOARD_LL, hookProc, hInstance, 0);
-        }*/
         public void hook()
         {
             if (callbackDelegate != null) throw new InvalidOperationException("Can't hook more than once");
@@ -94,9 +88,6 @@ namespace Utilities {
         /// <summary>
         /// Uninstalls the global hook
         /// </summary>
-        /*public void unhook() {
-			UnhookWindowsHookEx(hhook);
-		}*/
         public void unhook()
         {
             if (callbackDelegate == null) return;
@@ -113,38 +104,22 @@ namespace Utilities {
         /// <param name="lParam">The keyhook event information</param>
         /// <returns></returns>
         public int hookProc(int code, int wParam, ref keyboardHookStruct lParam) {
-            Console.WriteLine("-------------");
-            Console.WriteLine(code);
-            Console.WriteLine(wParam);
-            Console.WriteLine("-------------");
-            Console.WriteLine("1");
 			if (code >= 0) {
-                Console.WriteLine("2");
                 Keys key = (Keys)lParam.vkCode;
 				if (HookedKeys.Contains(key)) {
-                    Console.WriteLine("3");
                     KeyEventArgs kea = new KeyEventArgs(key);
                     if ((wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) && (KeyDown != null)) {
-                        Console.WriteLine("3.15");
                         KeyDown(this, kea) ;
-                        Console.WriteLine("3.25");
                     } else if ((wParam == WM_KEYUP || wParam == WM_SYSKEYUP) && (KeyUp != null)) {
-                        Console.WriteLine("3.5");
                         KeyUp(this, kea);
-                        Console.WriteLine("3.75");
                     }
 					if (kea.Handled) {
                         kea = new KeyEventArgs(key);
-                        Console.WriteLine("4");
                         return 1;
                     }
                 }
-                Console.WriteLine("5");
             }
-            Console.WriteLine("6");
-            //return 
-            CallNextHookEx(hhook, code, wParam, ref lParam);
-            return 1;
+            return CallNextHookEx(hhook, code, wParam, ref lParam);
 		}
 		#endregion
 

@@ -35,6 +35,12 @@ namespace DIYStreamDeck
             this.f13 = new System.Windows.Forms.Button();
             this.f14 = new System.Windows.Forms.Button();
             this.f15 = new System.Windows.Forms.Button();
+            this.f16 = new System.Windows.Forms.Button();
+            this.f17 = new System.Windows.Forms.Button();
+            this.f18 = new System.Windows.Forms.Button();
+            this.f19 = new System.Windows.Forms.Button();
+            this.f20 = new System.Windows.Forms.Button();
+            this.f21 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // selectProfile
@@ -88,11 +94,77 @@ namespace DIYStreamDeck
             this.f15.UseVisualStyleBackColor = true;
             this.f15.Click += new System.EventHandler(this.f15_Click);
             // 
+            // f16
+            // 
+            this.f16.Location = new System.Drawing.Point(8, 138);
+            this.f16.Name = "f16";
+            this.f16.Size = new System.Drawing.Size(92, 83);
+            this.f16.TabIndex = 8;
+            this.f16.Text = "F16";
+            this.f16.UseVisualStyleBackColor = true;
+            this.f16.Click += new System.EventHandler(this.f16_Click);
+            // 
+            // f17
+            // 
+            this.f17.Location = new System.Drawing.Point(106, 138);
+            this.f17.Name = "f17";
+            this.f17.Size = new System.Drawing.Size(92, 83);
+            this.f17.TabIndex = 9;
+            this.f17.Text = "F17";
+            this.f17.UseVisualStyleBackColor = true;
+            this.f17.Click += new System.EventHandler(this.f17_Click);
+            // 
+            // f18
+            // 
+            this.f18.Location = new System.Drawing.Point(204, 138);
+            this.f18.Name = "f18";
+            this.f18.Size = new System.Drawing.Size(92, 83);
+            this.f18.TabIndex = 10;
+            this.f18.Text = "F18";
+            this.f18.UseVisualStyleBackColor = true;
+            this.f18.Click += new System.EventHandler(this.f18_Click);
+            // 
+            // f19
+            // 
+            this.f19.Location = new System.Drawing.Point(9, 227);
+            this.f19.Name = "f19";
+            this.f19.Size = new System.Drawing.Size(92, 83);
+            this.f19.TabIndex = 11;
+            this.f19.Text = "F19";
+            this.f19.UseVisualStyleBackColor = true;
+            this.f19.Click += new System.EventHandler(this.f19_Click);
+            // 
+            // f20
+            // 
+            this.f20.Location = new System.Drawing.Point(106, 227);
+            this.f20.Name = "f20";
+            this.f20.Size = new System.Drawing.Size(92, 83);
+            this.f20.TabIndex = 12;
+            this.f20.Text = "F20";
+            this.f20.UseVisualStyleBackColor = true;
+            this.f20.Click += new System.EventHandler(this.f20_Click);
+            // 
+            // f21
+            // 
+            this.f21.Location = new System.Drawing.Point(205, 227);
+            this.f21.Name = "f21";
+            this.f21.Size = new System.Drawing.Size(92, 83);
+            this.f21.TabIndex = 13;
+            this.f21.Text = "F21";
+            this.f21.UseVisualStyleBackColor = true;
+            this.f21.Click += new System.EventHandler(this.f21_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(311, 150);
+            this.ClientSize = new System.Drawing.Size(306, 326);
+            this.Controls.Add(this.f21);
+            this.Controls.Add(this.f20);
+            this.Controls.Add(this.f19);
+            this.Controls.Add(this.f18);
+            this.Controls.Add(this.f17);
+            this.Controls.Add(this.f16);
             this.Controls.Add(this.f15);
             this.Controls.Add(this.f13);
             this.Controls.Add(this.newConfig);
@@ -114,6 +186,12 @@ namespace DIYStreamDeck
         private System.Windows.Forms.Button f13;
         private System.Windows.Forms.Button f14;
         private System.Windows.Forms.Button f15;
+        private System.Windows.Forms.Button f16;
+        private System.Windows.Forms.Button f17;
+        private System.Windows.Forms.Button f18;
+        private System.Windows.Forms.Button f19;
+        private System.Windows.Forms.Button f20;
+        private System.Windows.Forms.Button f21;
     }
 }
 

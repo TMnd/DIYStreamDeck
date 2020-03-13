@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace Utilities {
 	/// <summary>
 	/// A class that manages a global low level keyboard hook
 	/// </summary>
 	class globalKeyboardHook {
-		#region Constant, Structure and Delegate Definitions
-		/// <summary>
-		/// defines the callback type for the hook
-		/// </summary>
-		public delegate int keyboardHookProc(int code, int wParam, ref keyboardHookStruct lParam);
 
-		public struct keyboardHookStruct {
+        #region Constant, Structure and Delegate Definitions
+        /// <summary>
+        /// defines the callback type for the hook
+        /// </summary>
+        public delegate int keyboardHookProc(int code, int wParam, ref keyboardHookStruct lParam);
+        private static keyboardHookProc callbackDelegate;
+
+        public struct keyboardHookStruct {
 			public int vkCode;
 			public int scanCode;
 			public int flags;
@@ -67,46 +70,81 @@ namespace Utilities {
 		~globalKeyboardHook() {
 			unhook();
 		}
-		#endregion
+        #endregion
 
-		#region Public Methods
-		/// <summary>
-		/// Installs the global hook
-		/// </summary>
-		public void hook() {
-			IntPtr hInstance = LoadLibrary("User32");
-			hhook = SetWindowsHookEx(WH_KEYBOARD_LL, hookProc, hInstance, 0);
-		}
+        #region Public Methods
+        /// <summary>
+        /// Installs the global hook
+        /// </summary>
+        /*public void hook() {
+            Console.WriteLine("0 ----");
+            IntPtr hInstance = LoadLibrary("User32");
+            Console.WriteLine("1 ----");
+            hhook = SetWindowsHookEx(WH_KEYBOARD_LL, hookProc, hInstance, 0);
+        }*/
+        public void hook()
+        {
+            if (callbackDelegate != null) throw new InvalidOperationException("Can't hook more than once");
+            IntPtr hInstance = LoadLibrary("User32");
+            callbackDelegate = new keyboardHookProc(hookProc);
+            hhook = SetWindowsHookEx(WH_KEYBOARD_LL, callbackDelegate, hInstance, 0);
+            if (hhook == IntPtr.Zero) throw new Win32Exception();
+        }
 
-		/// <summary>
-		/// Uninstalls the global hook
-		/// </summary>
-		public void unhook() {
+        /// <summary>
+        /// Uninstalls the global hook
+        /// </summary>
+        /*public void unhook() {
 			UnhookWindowsHookEx(hhook);
-		}
+		}*/
+        public void unhook()
+        {
+            if (callbackDelegate == null) return;
+            bool ok = UnhookWindowsHookEx(hhook);
+            if (!ok) throw new Win32Exception();
+            callbackDelegate = null;
+        }
 
-		/// <summary>
-		/// The callback for the keyboard hook
-		/// </summary>
-		/// <param name="code">The hook code, if it isn't >= 0, the function shouldn't do anyting</param>
-		/// <param name="wParam">The event type</param>
-		/// <param name="lParam">The keyhook event information</param>
-		/// <returns></returns>
-		public int hookProc(int code, int wParam, ref keyboardHookStruct lParam) {
+        /// <summary>
+        /// The callback for the keyboard hook
+        /// </summary>
+        /// <param name="code">The hook code, if it isn't >= 0, the function shouldn't do anyting</param>
+        /// <param name="wParam">The event type</param>
+        /// <param name="lParam">The keyhook event information</param>
+        /// <returns></returns>
+        public int hookProc(int code, int wParam, ref keyboardHookStruct lParam) {
+            Console.WriteLine("-------------");
+            Console.WriteLine(code);
+            Console.WriteLine(wParam);
+            Console.WriteLine("-------------");
+            Console.WriteLine("1");
 			if (code >= 0) {
-				Keys key = (Keys)lParam.vkCode;
+                Console.WriteLine("2");
+                Keys key = (Keys)lParam.vkCode;
 				if (HookedKeys.Contains(key)) {
-					KeyEventArgs kea = new KeyEventArgs(key);
-					if ((wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) && (KeyDown != null)) {
-						KeyDown(this, kea) ;
-					} else if ((wParam == WM_KEYUP || wParam == WM_SYSKEYUP) && (KeyUp != null)) {
-						KeyUp(this, kea);
-					}
-					if (kea.Handled)
-						return 1;
-				}
-			}
-			return CallNextHookEx(hhook, code, wParam, ref lParam);
+                    Console.WriteLine("3");
+                    KeyEventArgs kea = new KeyEventArgs(key);
+                    if ((wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) && (KeyDown != null)) {
+                        Console.WriteLine("3.15");
+                        KeyDown(this, kea) ;
+                        Console.WriteLine("3.25");
+                    } else if ((wParam == WM_KEYUP || wParam == WM_SYSKEYUP) && (KeyUp != null)) {
+                        Console.WriteLine("3.5");
+                        KeyUp(this, kea);
+                        Console.WriteLine("3.75");
+                    }
+					if (kea.Handled) {
+                        kea = new KeyEventArgs(key);
+                        Console.WriteLine("4");
+                        return 1;
+                    }
+                }
+                Console.WriteLine("5");
+            }
+            Console.WriteLine("6");
+            //return 
+            CallNextHookEx(hhook, code, wParam, ref lParam);
+            return 1;
 		}
 		#endregion
 

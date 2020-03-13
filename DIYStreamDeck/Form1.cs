@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using Utilities;
@@ -40,11 +34,6 @@ namespace DIYStreamDeck
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            /*string startupPatha = ;
-            string projectDirectory = ;
-
-            Console.WriteLine(projectDirectory);*/
-
             string activeProfile = System.IO.Directory.GetCurrentDirectory() + "/activeProfile.xml";
             string startupPath = System.IO.Directory.GetCurrentDirectory() + "/Profiles";
 
@@ -120,6 +109,14 @@ namespace DIYStreamDeck
 
         private static int getPid(String input)
         {
+            string nomeaplicacao = "";
+
+            if (input.Equals("current"))
+            {
+                nomeaplicacao = GetForegroundProcessName();
+                input = nomeaplicacao;
+            }
+
             Process[] remoteAll = Process.GetProcessesByName(input);
             for (int i = 0; i < remoteAll.Length; i++)
             {
@@ -151,8 +148,7 @@ namespace DIYStreamDeck
                     switch (data[0])
                     {
                         case "Program":
-                            //Process.Start(data[1].ToString());
-                            NirCmdCall.DoNirCmd("setdefaultsounddevice \"Headset\"");
+                            Process.Start(data[1].ToString());
                             break;
                         case "Windows":
                             if (data[1].Equals(""))
@@ -162,12 +158,15 @@ namespace DIYStreamDeck
                                 //Drop a error when is used sometimes in a row.
                                 program = getPid(data[1].ToString().Split('\\')[1]);
                                 string status = AudioManager.GetApplicationMute(program).ToString();
-                                Console.WriteLine(status);
+                                //Console.WriteLine(status);
                                 if (status.Equals("False"))
                                     AudioManager.SetApplicationMute(program, true);
                                 else
                                     AudioManager.SetApplicationMute(program, false);
                             }
+                            break;
+                        case "nircmd":
+                            NirCmdCall.DoNirCmd("setdefaultsounddevice \"Headset\"");
                             break;
                         default:
                             PressKey(Keys.F13, false);
@@ -192,12 +191,15 @@ namespace DIYStreamDeck
                                 //Drop a error when is used sometimes in a row.
                                 program = getPid(data[1].ToString().Split('\\')[1]);
                                 string status = AudioManager.GetApplicationMute(program).ToString();
-                                Console.WriteLine(status);
+                                //Console.WriteLine(status);
                                 if (status.Equals("False"))
                                     AudioManager.SetApplicationMute(program, true);
                                 else
                                     AudioManager.SetApplicationMute(program, false);
                             }
+                            break;
+                        case "nircmd":
+                            NirCmdCall.DoNirCmd("setdefaultsounddevice \"Headset\"");
                             break;
                         default:
                             PressKey(Keys.F14, false);
@@ -219,14 +221,18 @@ namespace DIYStreamDeck
                             else
                             {
                                 //Drop a error when is used sometimes in a row.
-                                program = getPid(data[1].ToString().Split('\\')[1]);
+                                //program = getPid(data[1].ToString().Split('\\')[1]);
+                                program = getPid("current");
                                 string status = AudioManager.GetApplicationMute(program).ToString();
-                                Console.WriteLine(status);
+                                //Console.WriteLine(status);
                                 if (status.Equals("False"))
                                     AudioManager.SetApplicationMute(program, true);
                                 else
                                     AudioManager.SetApplicationMute(program, false);
                             }
+                            break;
+                        case "nircmd":
+                            NirCmdCall.DoNirCmd("setdefaultsounddevice \"Headset\"");
                             break;
                         default:
                             PressKey(Keys.F15, false);
@@ -313,7 +319,7 @@ namespace DIYStreamDeck
             {
                 string[] aux = a[1].ToString().Split('\\');
                 programName = aux[aux.Length - 1].Split('.')[0];
-                Console.WriteLine(programName);
+                //Console.WriteLine(programName);
             }
 
             switch (buttonid)

@@ -193,6 +193,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.saveButton);
             this.Name = "Form2";
+            this.ShowIcon = false;
             this.Text = "Insert Config";
             this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);

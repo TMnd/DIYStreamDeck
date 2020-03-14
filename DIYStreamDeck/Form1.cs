@@ -26,7 +26,7 @@ namespace DIYStreamDeck
         private XmlTextReader reader = null;
         globalKeyboardHook gkh = new globalKeyboardHook();
         int program;
-
+   
         public Form1()
         {
             InitializeComponent();
@@ -34,6 +34,11 @@ namespace DIYStreamDeck
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+
+            // Set the MaximizeBox to false to remove the maximize box.
+            MaximizeBox = false;
+
             string activeProfile = System.IO.Directory.GetCurrentDirectory() + "/activeProfile.xml";
             string startupPath = System.IO.Directory.GetCurrentDirectory() + "/Profiles";
 
@@ -74,6 +79,29 @@ namespace DIYStreamDeck
             gkh.HookedKeys.Add(Keys.F21);
             gkh.KeyDown += new KeyEventHandler(gkh_KeyDown);
             gkh.KeyUp += new KeyEventHandler(gkh_KeyUp);
+
+            if (profile.get_minimize())
+                WindowState = FormWindowState.Minimized;
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (FormWindowState.Minimized == WindowState)
+            {
+                notifyIcon1.Visible = true;
+                //notifyIcon1.ShowBalloonTip(500);
+                this.Hide();
+            }
+            else if (FormWindowState.Normal == WindowState)
+            {
+                notifyIcon1.Visible = false;
+            }
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
         }
 
         public static void PressKey(Keys key, bool up)
@@ -222,8 +250,14 @@ namespace DIYStreamDeck
                 XmlDocument xml = new XmlDocument();
                 xml.Load(activeProfileFilePath);
                 string title_name = xml.SelectSingleNode("Profile/Title").InnerText;
+                bool isMinimize = bool.Parse(xml.SelectSingleNode("Profile/Minimize").InnerText);
                 selectProfile.Text = title_name;
-                profile = new profile(title_name);
+                profile = new profile(title_name, isMinimize);
+
+                if (isMinimize)
+                    startMinimize.Checked = true;
+                else
+                    startMinimize.Checked = false;
 
                 for (int i = 1; i <= 9; i++)
                 {
@@ -259,6 +293,8 @@ namespace DIYStreamDeck
             writer.Formatting = Formatting.Indented;
 
             writer.WriteElementString("Title", "");
+
+            writer.WriteElementString("Minimize", "False");
 
             for (int i = 1; i <= 9; i++)
             {
@@ -436,12 +472,27 @@ namespace DIYStreamDeck
             profile.set_title(selectProfile.Text);
             profile.saveActiveProfileConfig();
 
-            selectProfile.Items.Add(selectProfile.Text);
+            if (!isPresent(selectProfile.Text))
+            {
+                selectProfile.Items.Add(selectProfile.Text);
+            }
 
             string sourceFile = System.IO.Directory.GetCurrentDirectory() + "/activeProfile.xml";
             string newFile = System.IO.Directory.GetCurrentDirectory() + "/Profiles/" + selectProfile.Text + ".xml";
 
             File.Copy(sourceFile, newFile, true);
+        }
+
+        private bool isPresent(string newProfileName)
+        {
+            for (int i = 0; i < selectProfile.Items.Count; i++)
+            {
+                if (selectProfile.GetItemText(selectProfile.Items[i]).Equals(newProfileName))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void f13_Click(object sender, EventArgs e)
@@ -518,6 +569,14 @@ namespace DIYStreamDeck
             }
             
             // WRONG File.Delete(System.IO.Directory.GetCurrentDirectory() + "/Profiles/" + selectProfile.Text + ".xml");
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if(startMinimize.Checked)
+                profile.set_minimize(true);
+            else
+                profile.set_minimize(false);
         }
     }
 

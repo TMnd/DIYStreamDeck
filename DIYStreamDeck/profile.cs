@@ -12,18 +12,21 @@ namespace DIYStreamDeck
     public class profile
     {
         private string profile_title;
-
+        private bool minimize;
         ArrayList SubData = new ArrayList();
         private Dictionary<string, ArrayList> ButtonData = new Dictionary<string, ArrayList>();
         
 
-        public profile(string profile_title)
+        public profile(string profile_title,bool minimize)
         {
             this.profile_title = profile_title;
+            this.minimize = minimize;
         }
 
         public string get_title() { return profile_title;  }
         public void set_title(string input_title) { this.profile_title = input_title; }
+        public bool get_minimize() { return minimize; }
+        public void set_minimize(bool minimize) { this.minimize = minimize; }
 
         public void saveActiveProfileConfig()
         {
@@ -36,7 +39,9 @@ namespace DIYStreamDeck
             writer.IndentChar = Convert.ToChar(" ");
             writer.Formatting = Formatting.Indented;
 
-            writer.WriteElementString("Title", this.profile_title);
+            writer.WriteElementString("Title", profile_title);
+
+            writer.WriteElementString("Minimize", minimize.ToString());
 
             for (int i = 1; i <= 9; i++)
             {

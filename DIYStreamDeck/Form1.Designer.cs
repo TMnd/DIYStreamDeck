@@ -30,6 +30,8 @@ namespace DIYStreamDeck
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.selectProfile = new System.Windows.Forms.ComboBox();
             this.newConfig = new System.Windows.Forms.Button();
             this.f13 = new System.Windows.Forms.Button();
@@ -42,6 +44,8 @@ namespace DIYStreamDeck
             this.f20 = new System.Windows.Forms.Button();
             this.f21 = new System.Windows.Forms.Button();
             this.remove = new System.Windows.Forms.Button();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.startMinimize = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // selectProfile
@@ -61,7 +65,7 @@ namespace DIYStreamDeck
             this.newConfig.Name = "newConfig";
             this.newConfig.Size = new System.Drawing.Size(39, 21);
             this.newConfig.TabIndex = 4;
-            this.newConfig.Text = "New";
+            this.newConfig.Text = "Save";
             this.newConfig.UseVisualStyleBackColor = true;
             this.newConfig.Click += new System.EventHandler(this.newConfig_Click);
             // 
@@ -159,17 +163,40 @@ namespace DIYStreamDeck
             // 
             this.remove.Location = new System.Drawing.Point(151, 10);
             this.remove.Name = "remove";
-            this.remove.Size = new System.Drawing.Size(59, 21);
+            this.remove.Size = new System.Drawing.Size(54, 21);
             this.remove.TabIndex = 14;
             this.remove.Text = "Remove";
             this.remove.UseVisualStyleBackColor = true;
             this.remove.Click += new System.EventHandler(this.remove_Click);
+            // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            // 
+            // startMinimize
+            // 
+            this.startMinimize.AutoSize = true;
+            this.startMinimize.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.startMinimize.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.startMinimize.Location = new System.Drawing.Point(204, 14);
+            this.startMinimize.Name = "startMinimize";
+            this.startMinimize.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.startMinimize.Size = new System.Drawing.Size(96, 17);
+            this.startMinimize.TabIndex = 15;
+            this.startMinimize.Text = "Start Minimize:";
+            this.startMinimize.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.startMinimize.UseVisualStyleBackColor = true;
+            this.startMinimize.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(306, 326);
+            this.Controls.Add(this.startMinimize);
             this.Controls.Add(this.remove);
             this.Controls.Add(this.f21);
             this.Controls.Add(this.f20);
@@ -185,9 +212,12 @@ namespace DIYStreamDeck
             this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
+            this.ShowIcon = false;
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -205,6 +235,8 @@ namespace DIYStreamDeck
         private System.Windows.Forms.Button f20;
         private System.Windows.Forms.Button f21;
         private System.Windows.Forms.Button remove;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.CheckBox startMinimize;
     }
 }
 

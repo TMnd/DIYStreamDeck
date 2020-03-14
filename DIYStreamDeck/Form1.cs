@@ -203,7 +203,8 @@ namespace DIYStreamDeck
                     }
                     break;
                 case "nircmd":
-                    NirCmdCall.DoNirCmd("setdefaultsounddevice \"Headset\"");
+                    string audioSource = data[1].ToString().Split('\\')[1];
+                    NirCmdCall.DoNirCmd("setdefaultsounddevice \""+audioSource+"\"");
                     break;
                 default:
                     PressKey(Keys.F13, false);
@@ -211,7 +212,6 @@ namespace DIYStreamDeck
                     break;
             }
         }
-
 
         private void loadConfig(string activeProfileFilePath)
         {
@@ -222,7 +222,6 @@ namespace DIYStreamDeck
                 XmlDocument xml = new XmlDocument();
                 xml.Load(activeProfileFilePath);
                 string title_name = xml.SelectSingleNode("Profile/Title").InnerText;
-                Console.WriteLine(title_name);
                 selectProfile.Text = title_name;
                 profile = new profile(title_name);
 
@@ -301,6 +300,8 @@ namespace DIYStreamDeck
                             f13.Text = "Mute All";
                         else
                             f13.Text = "Mute " + programName;
+                    else if (a[0].Equals("nircmd"))
+                        f13.Text = "Change to " + programName;
                     break;
                 case "Button2":
                     if (a[0].Equals("Program"))
@@ -312,6 +313,8 @@ namespace DIYStreamDeck
                             f14.Text = "Mute All";
                         else
                             f14.Text = "Mute " + programName;
+                    else if (a[0].Equals("nircmd"))
+                        f14.Text = "Change to " + programName;
                     break;
                 case "Button3":
                     if (a[0].Equals("Program"))
@@ -323,6 +326,8 @@ namespace DIYStreamDeck
                             f15.Text = "Mute All";
                         else
                             f15.Text = "Mute " + programName;
+                    else if (a[0].Equals("nircmd"))
+                        f15.Text = "Change to " + programName;
                     break;
                 case "Button4":
                     if (a[0].Equals("Program"))
@@ -334,6 +339,8 @@ namespace DIYStreamDeck
                             f16.Text = "Mute All";
                         else
                             f16.Text = "Mute " + programName;
+                    else if (a[0].Equals("nircmd"))
+                        f16.Text = "Change to " + programName;
                     break;
                 case "Button5":
                     if (a[0].Equals("Program"))
@@ -345,6 +352,8 @@ namespace DIYStreamDeck
                             f17.Text = "Mute All";
                         else
                             f17.Text = "Mute " + programName;
+                    else if (a[0].Equals("nircmd"))
+                        f17.Text = "Change to " + programName;
                     break;
                 case "Button6":
                     if (a[0].Equals("Program"))
@@ -356,6 +365,8 @@ namespace DIYStreamDeck
                             f18.Text = "Mute All";
                         else
                             f18.Text = "Mute " + programName;
+                    else if (a[0].Equals("nircmd"))
+                        f18.Text = "Change to " + programName;
                     break;
                 case "Button7":
                     if (a[0].Equals("Program"))
@@ -367,6 +378,8 @@ namespace DIYStreamDeck
                             f19.Text = "Mute All";
                         else
                             f19.Text = "Mute " + programName;
+                    else if (a[0].Equals("nircmd"))
+                        f19.Text = "Change to " + programName;
                     break;
                 case "Button8":
                     if (a[0].Equals("Program"))
@@ -378,6 +391,8 @@ namespace DIYStreamDeck
                             f20.Text = "Mute All";
                         else
                             f20.Text = "Mute " + programName;
+                    else if (a[0].Equals("nircmd"))
+                        f20.Text = "Change to " + programName;
                     break;
                 case "Button9":
                     if (a[0].Equals("Program"))
@@ -389,6 +404,8 @@ namespace DIYStreamDeck
                             f21.Text = "Mute All";
                         else
                             f21.Text = "Mute " + programName;
+                    else if (a[0].Equals("nircmd"))
+                        f21.Text = "Change to " + programName;
                     break;
                 default:
                     break;
@@ -399,11 +416,6 @@ namespace DIYStreamDeck
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             string selectedProfileTitle = (string)selectProfile.SelectedItem;
-
-           // profile.set_title(selectedProfileTitle);
-
-
-            //Console.WriteLine(selectProfile.Text);
 
             string newFile = System.IO.Directory.GetCurrentDirectory() + "/Profiles/" + selectProfile.Text + ".xml";
 
@@ -423,6 +435,8 @@ namespace DIYStreamDeck
 
             profile.set_title(selectProfile.Text);
             profile.saveActiveProfileConfig();
+
+            selectProfile.Items.Add(selectProfile.Text);
 
             string sourceFile = System.IO.Directory.GetCurrentDirectory() + "/activeProfile.xml";
             string newFile = System.IO.Directory.GetCurrentDirectory() + "/Profiles/" + selectProfile.Text + ".xml";
@@ -483,8 +497,29 @@ namespace DIYStreamDeck
             //When the form2 closes
             refreshButtonData(buttonId);
         }
-    }
 
+        private void remove_Click(object sender, EventArgs e)
+        {
+            int getCurrentIndex;
+
+            if (selectProfile.Items.Count == 0 || selectProfile.Items.Count == 1) return;
+ 
+            for (int i = 0; i < selectProfile.Items.Count; i++)
+            {
+                if (selectProfile.GetItemText(selectProfile.Items[i]).Equals(selectProfile.Text))
+                {
+                    getCurrentIndex = i;
+                    selectProfile.Items.Remove(selectProfile.Text);
+                    if (i == selectProfile.Items.Count)
+                        selectProfile.Text = selectProfile.GetItemText(selectProfile.Items[getCurrentIndex - 1]);
+                    else
+                        selectProfile.Text = selectProfile.GetItemText(selectProfile.Items[getCurrentIndex]);
+                }
+            }
+            
+            // WRONG File.Delete(System.IO.Directory.GetCurrentDirectory() + "/Profiles/" + selectProfile.Text + ".xml");
+        }
+    }
 
     public class NirCmdCall
     {

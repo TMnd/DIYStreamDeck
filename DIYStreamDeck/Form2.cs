@@ -42,6 +42,10 @@ namespace DIYStreamDeck
                         inputProgram.Text = a[1].ToString().Split('\\')[1];
                     }
                     break;
+                case "nircmd":
+                    defaultAudioDevice.Checked = true;
+                    deviceName.Text = a[1].ToString().Split('\\')[1];
+                    break;
                 default:
                     radioDefault.Checked = true;
                     break;
@@ -121,7 +125,7 @@ namespace DIYStreamDeck
 
         private void defaultAudioDevice_CheckedChanged(object sender, EventArgs e)
         {
-            type = "Windows";
+            type = "nircmd";
             if (defaultAudioDevice.Checked == true)
             {
                 programPath.Text = "";

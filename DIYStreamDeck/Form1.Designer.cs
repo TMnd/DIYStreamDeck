@@ -41,6 +41,7 @@ namespace DIYStreamDeck
             this.f19 = new System.Windows.Forms.Button();
             this.f20 = new System.Windows.Forms.Button();
             this.f21 = new System.Windows.Forms.Button();
+            this.remove = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // selectProfile
@@ -154,11 +155,22 @@ namespace DIYStreamDeck
             this.f21.UseVisualStyleBackColor = true;
             this.f21.Click += new System.EventHandler(this.f21_Click);
             // 
+            // remove
+            // 
+            this.remove.Location = new System.Drawing.Point(151, 10);
+            this.remove.Name = "remove";
+            this.remove.Size = new System.Drawing.Size(59, 21);
+            this.remove.TabIndex = 14;
+            this.remove.Text = "Remove";
+            this.remove.UseVisualStyleBackColor = true;
+            this.remove.Click += new System.EventHandler(this.remove_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(306, 326);
+            this.Controls.Add(this.remove);
             this.Controls.Add(this.f21);
             this.Controls.Add(this.f20);
             this.Controls.Add(this.f19);
@@ -192,6 +204,7 @@ namespace DIYStreamDeck
         private System.Windows.Forms.Button f19;
         private System.Windows.Forms.Button f20;
         private System.Windows.Forms.Button f21;
+        private System.Windows.Forms.Button remove;
     }
 }
 

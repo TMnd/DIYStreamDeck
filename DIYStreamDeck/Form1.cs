@@ -67,6 +67,11 @@ namespace DIYStreamDeck
             gkh.HookedKeys.Add(Keys.F14);
             gkh.HookedKeys.Add(Keys.F15);
             gkh.HookedKeys.Add(Keys.F16);
+            gkh.HookedKeys.Add(Keys.F17);
+            gkh.HookedKeys.Add(Keys.F18);
+            gkh.HookedKeys.Add(Keys.F19);
+            gkh.HookedKeys.Add(Keys.F20);
+            gkh.HookedKeys.Add(Keys.F21);
             gkh.KeyDown += new KeyEventHandler(gkh_KeyDown);
             gkh.KeyUp += new KeyEventHandler(gkh_KeyUp);
         }
@@ -207,6 +212,7 @@ namespace DIYStreamDeck
             }
         }
 
+
         private void loadConfig(string activeProfileFilePath)
         {
             try
@@ -216,7 +222,8 @@ namespace DIYStreamDeck
                 XmlDocument xml = new XmlDocument();
                 xml.Load(activeProfileFilePath);
                 string title_name = xml.SelectSingleNode("Profile/Title").InnerText;
-                selectProfile.SelectedText = title_name; 
+                Console.WriteLine(title_name);
+                selectProfile.Text = title_name;
                 profile = new profile(title_name);
 
                 for (int i = 1; i <= 9; i++)
@@ -280,7 +287,6 @@ namespace DIYStreamDeck
             {
                 string[] aux = a[1].ToString().Split('\\');
                 programName = aux[aux.Length - 1].Split('.')[0];
-                //Console.WriteLine(programName);
             }
 
             switch (buttonid)
@@ -394,15 +400,34 @@ namespace DIYStreamDeck
         {
             string selectedProfileTitle = (string)selectProfile.SelectedItem;
 
-            profile.set_title(selectedProfileTitle);
+           // profile.set_title(selectedProfileTitle);
+
+
+            //Console.WriteLine(selectProfile.Text);
+
+            string newFile = System.IO.Directory.GetCurrentDirectory() + "/Profiles/" + selectProfile.Text + ".xml";
+
+            loadConfig(newFile);
 
             profile.saveActiveProfileConfig();
+
+            for (int i = 1; i <= 9; i++)
+            {
+                refreshButtonData("Button" + i);
+            }
         } 
 
         private void newConfig_Click(object sender, EventArgs e)
         {
+            if (selectProfile.Text.Length == 0) return;
+
             profile.set_title(selectProfile.Text);
             profile.saveActiveProfileConfig();
+
+            string sourceFile = System.IO.Directory.GetCurrentDirectory() + "/activeProfile.xml";
+            string newFile = System.IO.Directory.GetCurrentDirectory() + "/Profiles/" + selectProfile.Text + ".xml";
+
+            File.Copy(sourceFile, newFile, true);
         }
 
         private void f13_Click(object sender, EventArgs e)

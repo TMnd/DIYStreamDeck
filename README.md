@@ -1,5 +1,5 @@
 # DIYStreamDeck
 
-It's a software for a DIY stream deck. 
+It's the software for a DIY stream deck. 
 
 To be continued...
